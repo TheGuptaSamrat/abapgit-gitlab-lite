@@ -1,34 +1,58 @@
 # abapgit-gitlab-lite
 
-Mini corporate-friendly ABAP export tool inspired by `abapGit`.
+Lightweight ABAP export utility for publishing a static GitLab reference repository
+of custom SAP code and metadata for AI skill packs.
 
-## Goal
+## Purpose
 
-Build a lightweight ABAP report-based solution that:
+This project is not trying to replace version control or transport management.
+It creates a readable reference repository that developers refresh manually when
+they want AI-assisted support for:
 
-- discovers selected custom ABAP objects from a package or explicit object list,
-- serializes them into readable text files,
-- pushes the export to a GitLab repository over HTTPS,
-- creates a stable reference repository for AI skill packs and future enhancement work.
+- understanding existing custom developments,
+- proposing fixes,
+- suggesting enhancements,
+- analyzing technical patterns and dependencies,
+- giving better recommendations from skill packs like `abap` and `amdp`.
 
-## Why A Mini Version
+## Product Direction
 
-The original `abapGit` is a full Git client for ABAP systems. Our environment is more constrained:
+- Source of truth: SAP system
+- Reference target: corporate GitLab
+- Runtime model: manual developer-triggered refresh
+- Integration model: HTTPS + GitLab project/group token
+- Export style: snapshot refresh with internal delta optimization
+- Retention model: soft-retain old references by default
 
-- we can build ABAP reports and classes,
-- we may be able to configure outbound HTTPS to GitLab,
-- we do not have broad Basis/admin freedom in the corporate landscape.
+## Repository Contents
 
-That makes a one-way export tool a better fit than a full clone/pull/push UI.
+- `docs/`
+  Architecture, comparison tables, one-pager, implementation guide
+- `src/`
+  ABAP report, interfaces, classes, and object-handler scaffolding
 
-## Current Decisions
+## Key Documents
 
-- Direction: one-way `SAP -> GitLab`
-- Initial target: custom development objects only
-- Initial delivery model: executable ABAP report plus helper classes
-- Git connectivity: HTTPS only
+- `docs/abapgit-mini-analysis.md`
+- `docs/options-comparison.md`
+- `docs/architecture-one-pager.md`
+- `docs/implementation-guide.md`
 
-## Next Document
+## Initial ABAP Scope
 
-Detailed analysis, MVP scope, and feature categorization are in
-`docs/abapgit-mini-analysis.md`.
+The v1 scaffold targets these custom object types:
+
+- `CLAS`
+- `INTF`
+- `PROG`
+- `DTEL`
+- `DOMA`
+- `TABL`
+
+## Current Status
+
+This repository now contains:
+
+- design and architecture documentation,
+- an implementation scaffold for the ABAP exporter,
+- ABAP class/interface boundaries for the first delivery slice.
