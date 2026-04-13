@@ -15,6 +15,9 @@ CLASS zcl_zref_serializer DEFINITION
   PRIVATE SECTION.
     DATA mt_handlers TYPE STANDARD TABLE OF REF TO zif_zref_object_handler WITH DEFAULT KEY.
     METHODS register_default_handlers.
+    METHODS add_reference_files
+      CHANGING
+        cs_bundle TYPE zif_zref_types=>ty_object_bundle.
     METHODS find_handler
       IMPORTING
         is_object_key       TYPE zif_zref_types=>ty_object_key
@@ -35,6 +38,26 @@ CLASS zcl_zref_serializer IMPLEMENTATION.
     APPEND NEW zcl_zref_obj_dtel( ) TO mt_handlers.
     APPEND NEW zcl_zref_obj_doma( ) TO mt_handlers.
     APPEND NEW zcl_zref_obj_tabl( ) TO mt_handlers.
+  ENDMETHOD.
+
+  METHOD add_reference_files.
+    DATA lv_root TYPE string.
+
+    lv_root = |objects/{ cs_bundle-object_key-obj_type }/{ cs_bundle-object_key-obj_name }|.
+
+    APPEND VALUE zif_zref_types=>ty_export_file(
+      path         = |{ lv_root }/metadata.json|
+      content_type = 'application/json'
+      text_content = cs_bundle-metadata_json
+      checksum     = ''
+      status       = 'ACTIVE' ) TO cs_bundle-files.
+
+    APPEND VALUE zif_zref_types=>ty_export_file(
+      path         = |{ lv_root }/summary.md|
+      content_type = 'text/markdown'
+      text_content = cs_bundle-summary_markdown
+      checksum     = ''
+      status       = 'ACTIVE' ) TO cs_bundle-files.
   ENDMETHOD.
 
   METHOD find_handler.
@@ -63,6 +86,7 @@ CLASS zcl_zref_serializer IMPLEMENTATION.
       TRY.
           ls_bundle = lo_handler->build_bundle( <ls_key> ).
           ls_bundle-summary_markdown = zcl_zref_summary_builder=>build_summary( ls_bundle ).
+          add_reference_files( CHANGING cs_bundle = ls_bundle ).
           APPEND ls_bundle TO rt_bundles.
         CATCH cx_static_check INTO DATA(lx_error).
           io_log->add_error(

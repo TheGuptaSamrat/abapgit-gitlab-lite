@@ -12,13 +12,15 @@ CLASS zcl_zref_obj_tabl IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_zref_object_handler~build_bundle.
+    DATA lv_root TYPE string.
     rs_bundle = create_basic_bundle( is_object_key ).
+    lv_root = build_object_root( is_object_key ).
     rs_bundle-metadata_json =
       |{{"object_type":"TABL","object_name":"{ is_object_key-obj_name }","package":"{ is_object_key-devclass }"}}|.
 
     add_text_file(
       EXPORTING
-        iv_path    = |objects/TABL/{ is_object_key-obj_name }/metadata.json|
+        iv_path    = |{ lv_root }/definition.txt|
         iv_content = rs_bundle-metadata_json
       CHANGING
         ct_files   = rs_bundle-files ).

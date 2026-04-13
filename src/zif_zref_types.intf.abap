@@ -52,6 +52,16 @@ INTERFACE zif_zref_types PUBLIC.
     END OF ty_profile.
 
   TYPES:
+    BEGIN OF ty_publish_action,
+      action       TYPE string,
+      file_path    TYPE string,
+      content_type TYPE string,
+      content      TYPE string,
+    END OF ty_publish_action.
+
+  TYPES ty_publish_action_tt TYPE STANDARD TABLE OF ty_publish_action WITH DEFAULT KEY.
+
+  TYPES:
     BEGIN OF ty_log_message,
       severity TYPE char1,
       category TYPE string,

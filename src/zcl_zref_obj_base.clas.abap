@@ -7,6 +7,12 @@ CLASS zcl_zref_obj_base DEFINITION
     INTERFACES zif_zref_object_handler.
 
   PROTECTED SECTION.
+    METHODS build_object_root
+      IMPORTING
+        is_object_key    TYPE zif_zref_types=>ty_object_key
+      RETURNING
+        VALUE(rv_path)   TYPE string.
+
     METHODS create_basic_bundle
       IMPORTING
         is_object_key       TYPE zif_zref_types=>ty_object_key
@@ -22,6 +28,10 @@ CLASS zcl_zref_obj_base DEFINITION
 ENDCLASS.
 
 CLASS zcl_zref_obj_base IMPLEMENTATION.
+
+  METHOD build_object_root.
+    rv_path = |objects/{ is_object_key-obj_type }/{ is_object_key-obj_name }|.
+  ENDMETHOD.
 
   METHOD create_basic_bundle.
     CLEAR rs_bundle.

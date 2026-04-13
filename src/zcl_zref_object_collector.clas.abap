@@ -23,16 +23,23 @@ CLASS zcl_zref_object_collector IMPLEMENTATION.
       INTO TABLE lt_tadir
       WHERE devclass = is_profile-package_name
         AND pgmid    = 'R3TR'
-        AND obj_name LIKE 'Z%'
         AND delflag  = space.
 
     LOOP AT lt_tadir ASSIGNING FIELD-SYMBOL(<ls_tadir>).
+      CHECK <ls_tadir>-obj_name CP 'Z*' OR <ls_tadir>-obj_name CP 'Y*'.
       CLEAR ls_key.
       ls_key-obj_type = <ls_tadir>-object.
       ls_key-obj_name = <ls_tadir>-obj_name.
       ls_key-devclass = <ls_tadir>-devclass.
       APPEND ls_key TO rt_object_keys.
     ENDLOOP.
+
+    IF is_profile-include_subpackages = abap_true.
+      io_log->add_info(
+        iv_category = 'COLLECT'
+        iv_object   = is_profile-package_name
+        iv_message  = 'Subpackage expansion is not implemented yet in the scaffold' ).
+    ENDIF.
 
     io_log->add_info(
       iv_category = 'COLLECT'
