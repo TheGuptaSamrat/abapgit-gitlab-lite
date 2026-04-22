@@ -201,6 +201,7 @@ The actual HTTPS call to GitLab is still a TODO in the scaffold.
 - `docs/options-comparison.md`
 - `docs/architecture-one-pager.md`
 - `docs/implementation-guide.md`
+- `docs/prerequisites-and-setup.md`
 
 ## Simulation and Validation
 
