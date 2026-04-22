@@ -202,6 +202,7 @@ The actual HTTPS call to GitLab is still a TODO in the scaffold.
 - `docs/architecture-one-pager.md`
 - `docs/implementation-guide.md`
 - `docs/prerequisites-and-setup.md`
+- `docs/runbooks/gitlab-auth-testing.md`
 
 ## Simulation and Validation
 
@@ -233,6 +234,7 @@ This repository contains:
 - object handler boundaries
 - manifest and publish-action assembly logic
 - local simulation support
+- runbooks for prerequisite and GitLab auth testing
 
 ## Important Current Gaps
 
