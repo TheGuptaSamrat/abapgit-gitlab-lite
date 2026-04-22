@@ -24,6 +24,21 @@ Why:
 
 Use URL-encoded path only if your team explicitly prefers it.
 
+## Current Known Test Values
+
+Use these values for the current project unless they change later:
+
+- SM59 destination: `ZTR_GITLAB_REPO`
+- GitLab project ID: `388660`
+- branch: `main`
+
+Recommended test endpoints:
+
+```text
+/api/v4/projects/388660
+/api/v4/projects/388660/repository/branches/main
+```
+
 ## Part 1: Find the Project ID in GitLab UI
 
 ### Exact UI clicks
@@ -172,13 +187,52 @@ Use these inputs:
 - token = GitLab project/group token
 - branch = `main`
 
+## Part 6A: Exact Beginner Steps In SAP GUI
+
+Follow these exactly if you are new to this.
+
+### Step 1. Open SE38
+
+1. Log in to SAP GUI.
+2. In the command box at the top, type `SE38`.
+3. Press `Enter`.
+
+### Step 2. Create a temporary test report
+
+1. In the `Program` field, enter:
+
+```text
+ZTEST_GITLAB_AUTH
+```
+
+2. Click `Create`.
+3. If SAP asks for report attributes, fill:
+   - Title: `GitLab Auth Test`
+   - Type: `Executable Program`
+4. Save it in your package or local object according to your team practice.
+
+### Step 3. Paste the ABAP code
+
+Delete any default text in the editor and paste the ABAP sample from this
+runbook.
+
+### Step 4. Use the current project ID
+
+For your current setup, use:
+
+- `P_DEST = ZTR_GITLAB_REPO`
+- `P_PROJ = 388660`
+- `P_BR = main`
+
+Only `P_TOK` needs to be entered manually at runtime.
+
 ### ABAP sample
 
 ```abap
 REPORT ztest_gitlab_auth.
 
 PARAMETERS p_dest TYPE rfcdest DEFAULT 'ZTR_GITLAB_REPO' OBLIGATORY.
-PARAMETERS p_proj TYPE string LOWER CASE OBLIGATORY.
+PARAMETERS p_proj TYPE string LOWER CASE OBLIGATORY DEFAULT '388660'.
 PARAMETERS p_tok  TYPE string LOWER CASE OBLIGATORY.
 PARAMETERS p_br   TYPE string LOWER CASE DEFAULT 'main'.
 
@@ -271,6 +325,137 @@ START-OF-SELECTION.
 
   lo_client->close( ).
 ```
+
+### Step 5. Activate the report
+
+1. Click the `Activate` button.
+2. Make sure no syntax errors remain.
+
+If there are syntax errors:
+
+- fix them first
+- then activate again
+
+### Step 6. Run Test 1 for project metadata
+
+This checks whether the destination and token can read the project.
+
+Keep this line exactly as:
+
+```abap
+lv_uri = |/api/v4/projects/{ p_proj }|.
+```
+
+Then:
+
+1. Click `Execute`.
+2. Enter:
+   - `P_DEST = ZTR_GITLAB_REPO`
+   - `P_PROJ = 388660`
+   - `P_TOK = <your GitLab project token>`
+   - `P_BR = main`
+3. Execute.
+
+Expected success result:
+
+```text
+HTTP status: 200
+```
+
+### Step 7. Interpret Test 1
+
+#### If you get `200`
+
+This means:
+
+- destination works
+- token is accepted
+- project `388660` is visible
+
+Proceed to Test 2.
+
+#### If you get `401`
+
+This usually means:
+
+- token is invalid
+- token expired
+- wrong token copied
+
+#### If you get `403`
+
+This usually means:
+
+- token is valid
+- but permission or scope is insufficient
+
+#### If you get `404`
+
+This usually means:
+
+- wrong project id
+- token cannot see the project
+
+#### If you get `SEND failed` or `RECEIVE failed`
+
+This usually means:
+
+- destination issue
+- network issue
+- proxy/TLS issue
+
+### Step 8. Run Test 2 for branch metadata
+
+After Test 1 succeeds, change this line:
+
+```abap
+lv_uri = |/api/v4/projects/{ p_proj }|.
+```
+
+to:
+
+```abap
+lv_uri = |/api/v4/projects/{ p_proj }/repository/branches/{ p_br }|.
+```
+
+Then:
+
+1. Activate the report again.
+2. Click `Execute`.
+3. Use the same values:
+   - `P_DEST = ZTR_GITLAB_REPO`
+   - `P_PROJ = 388660`
+   - `P_TOK = <your GitLab project token>`
+   - `P_BR = main`
+4. Execute.
+
+Expected success result:
+
+```text
+HTTP status: 200
+```
+
+### Step 9. Interpret Test 2
+
+If Test 2 returns `200`, then:
+
+- project access works
+- branch read access works
+- token and destination are good enough for the next implementation step
+
+### Step 10. Capture evidence
+
+Record all of the following:
+
+- destination used: `ZTR_GITLAB_REPO`
+- project id used: `388660`
+- test 1 endpoint: `/api/v4/projects/388660`
+- test 2 endpoint: `/api/v4/projects/388660/repository/branches/main`
+- HTTP status for both tests
+- response reason text
+- any error text if a test fails
+
+This gives enough evidence for troubleshooting later.
 
 ## Part 7: How to Run the ABAP Test
 
