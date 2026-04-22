@@ -203,6 +203,7 @@ The actual HTTPS call to GitLab is still a TODO in the scaffold.
 - `docs/implementation-guide.md`
 - `docs/prerequisites-and-setup.md`
 - `docs/runbooks/gitlab-auth-testing.md`
+- `docs/runbooks/gitlab-write-test.md`
 
 ## Simulation and Validation
 
